@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NRMScope — Sistem Informasi & Prediksi Tingkat Pengangguran Terbuka</title>
+  
+  <!-- Font Family -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Utama -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#beranda" class="logo-brand">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="8" fill="#12345A"/>
+          <path d="M10 26V10L18 20L26 10V26" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 22L18 14L26 22" stroke="#2563EB" stroke-width="2" stroke-dasharray="2 2"/>
+          <circle cx="26" cy="10" r="3" fill="#0F9D8A"/>
+        </svg>
+        <span class="logo-text">NRM<span>Scope</span></span>
+      </a>
+
+      <nav class="nav-menu" id="navMenu">
+        <a href="#beranda" class="nav-link active">Beranda</a>
+        <a href="#dashboard" class="nav-link">Statistik</a>
+        <a href="#prediksi" class="nav-link">Prediksi</a>
+        <a href="#analisis" class="nav-link">Analisis</a>
+        <a href="#tentang" class="nav-link">Tentang</a>
+        <a href="#tim" class="nav-link">Tim Kami</a>
+        <a href="#dashboard" class="btn btn-primary btn-sm">Lihat Dashboard</a>
+      </nav>
+
+      <button class="hamburger" id="hamburgerBtn" aria-label="Toggle Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main id="mainContent">
+
+    <!-- 1. BERANDA / HERO SECTION -->
+    <section id="beranda" class="page-section active">
+      <div class="hero-wrapper">
+        <div class="hero-text">
+          <span class="badge-tag">Data Statistik • Analisis Tren • Prediksi</span>
+          <h1>Memahami Tren Pengangguran, Membangun Masa Depan Pekerjaan.</h1>
+          <p class="hero-desc">
+            NRMScope menyajikan data historis, analisis tren, dan prediksi Tingkat Pengangguran Terbuka (TPT) di Indonesia 2018–2026 untuk mendukung pemahaman kondisi ketenagakerjaan dan pencapaian target SDGs 8.
+          </p>
+          <div class="hero-cta">
+            <a href="#dashboard" class="btn btn-primary">Jelajahi Data</a>
+            <a href="#prediksi" class="btn btn-outline">Lihat Prediksi</a>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="mini-dashboard-card">
+            <div class="mini-card-header">
+              <span>Ringkasan TPT Nasional 2024</span>
+              <span class="status-pill teal">Aktual</span>
+            </div>
+            <div class="mini-card-body">
+              <span class="big-number">4.91%</span>
+              <span class="trend-indicator down">↓ 0.41% vs 2023</span>
+            </div>
+            <div class="mini-chart-container">
+              <canvas id="miniHeroChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. DASHBOARD STATISTIK -->
+    <section id="dashboard" class="page-section">
+      <div class="section-header">
+        <h2>Dashboard Statistik Ketenagakerjaan</h2>
+        <p>Visualisasi data historis Tingkat Pengangguran Terbuka (TPT) Indonesia 2018–2026.</p>
+      </div>
+
+      <!-- KPI Cards Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-title">TPT Terbaru (2024)</span>
+          <div class="kpi-value">4.91%</div>
+          <span class="kpi-sub text-teal">Data Resmi BPS</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title">Perubahan Tahunan</span>
+          <div class="kpi-value text-teal">-0.41%</div>
+          <span class="kpi-sub">Penurunan dari 2023 (5.32%)</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title">Proyeksi TPT 2026</span>
+          <div class="kpi-value text-royal">4.68%</div>
+          <span class="kpi-sub text-amber">Hasil Model Prediksi</span>
+        </div>
+      </div>
+
+      <!-- Main Chart Card -->
+      <div class="card chart-card">
+        <div class="card-toolbar" style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+          <h3>Visualisasi Interaktif TPT</h3>
+          
+<!-- Filter Kustom Provinsi, Periode, Jenjang Pendidikan, dan Status -->
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <select id="filterProvince" class="form-control">
+              <option value="all">Semua Provinsi (Nasional)</option>
+              <option value="Nasional">Nasional (Indonesia)</option>
+              <option value="Aceh">Aceh</option>
+              <option value="Sumatera Utara">Sumatera Utara</option>
+              <option value="Sumatera Barat">Sumatera Barat</option>
+              <option value="Riau">Riau</option>
+              <option value="Jambi">Jambi</option>
+              <option value="Sumatera Selatan">Sumatera Selatan</option>
+              <option value="Bengkulu">Bengkulu</option>
+              <option value="Lampung">Lampung</option>
+              <option value="Kepulauan Bangka Belitung">Kepulauan Bangka Belitung</option>
+              <option value="Kepulauan Riau">Kepulauan Riau</option>
+              <option value="DKI Jakarta">DKI Jakarta</option>
+              <option value="Jawa Barat">Jawa Barat</option>
+              <option value="Jawa Tengah">Jawa Tengah</option>
+              <option value="DI Yogyakarta">DI Yogyakarta</option>
+              <option value="Jawa Timur">Jawa Timur</option>
+              <option value="Banten">Banten</option>
+              <option value="Bali">Bali</option>
+              <option value="Nusa Tenggara Barat">Nusa Tenggara Barat</option>
+              <option value="Nusa Tenggara Timur">Nusa Tenggara Timur</option>
+              <option value="Kalimantan Barat">Kalimantan Barat</option>
+              <option value="Kalimantan Tengah">Kalimantan Tengah</option>
+              <option value="Kalimantan Selatan">Kalimantan Selatan</option>
+              <option value="Kalimantan Timur">Kalimantan Timur</option>
+              <option value="Kalimantan Utara">Kalimantan Utara</option>
+              <option value="Sulawesi Utara">Sulawesi Utara</option>
+              <option value="Sulawesi Tengah">Sulawesi Tengah</option>
+              <option value="Sulawesi Selatan">Sulawesi Selatan</option>
+              <option value="Sulawesi Tenggara">Sulawesi Tenggara</option>
+              <option value="Gorontalo">Gorontalo</option>
+              <option value="Sulawesi Barat">Sulawesi Barat</option>
+              <option value="Maluku">Maluku</option>
+              <option value="Maluku Utara">Maluku Utara</option>
+              <option value="Papua">Papua</option>
+              <option value="Papua Barat">Papua Barat</option>
+              <option value="Papua Selatan">Papua Selatan</option>
+              <option value="Papua Tengah">Papua Tengah</option>
+              <option value="Papua Pegunungan">Papua Pegunungan</option>
+              <option value="Papua Barat Daya">Papua Barat Daya</option>
+            </select>
+
+            <select id="filterPeriod" class="form-control">
+              <option value="all">Semua Periode (Feb & Ags)</option>
+              <option value="Februari">Februari (Semester I)</option>
+              <option value="Agustus">Agustus (Semester II)</option>
+            </select>
+
+            <select id="filterEducation" class="form-control">
+              <option value="all">Semua Jenjang Pendidikan</option>
+              <option value="Semua Jenjang">Semua Jenjang</option>
+              <option value="SD Kebawah">SD Kebawah</option>
+              <option value="SMP">SMP</option>
+              <option value="SMA/SMK">SMA/SMK</option>
+              <option value="Diploma/Universitas">Diploma / Universitas</option>
+            </select>
+
+            <select id="filterStatus" class="form-control">
+              <option value="all">Status: Aktual & Prediksi</option>
+              <option value="Aktual">Aktual</option>
+              <option value="Prediksi">Prediksi</option>
+            </select>
+          </div>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="mainDashboardChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Data Table Card -->
+      <div class="card table-card">
+        <div class="card-toolbar">
+          <h3>Tabel Data Historis & Estimasi</h3>
+          <button id="btnExportCSV" class="btn btn-outline btn-sm">Unduh CSV</button>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="tptDataTable">
+            <thead>
+              <tr>
+                <th>Tahun</th>
+                <th>Periode</th>
+                <th>Provinsi</th>
+                <th>Jenjang</th>
+                <th>TPT (%)</th>
+                <th>Status</th>
+                <th>Catatan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Data diinjeksi via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HALAMAN PREDIKSI -->
+    <section id="prediksi" class="page-section">
+      <div class="section-header">
+        <h2>Model & Proyeksi TPT 2026</h2>
+        <p>Estimasi matematis tren pengangguran sebagai alat bantu perencanaan akademis.</p>
+      </div>
+
+      <div class="prediction-grid">
+        <div class="card">
+          <h3>Metodologi Prediksi</h3>
+          <p>Proyeksi ini dihitung menggunakan pendekatan <strong>Regresi Linear Tren Sederhana</strong> (Y = aX + b) berdasarkan rentang historis BPS 2018–2024.</p>
+          <hr style="margin: 12px 0; border: 0; border-top: 1px solid #CBD5E1;">
+          <ul class="metric-list" style="list-style: none; padding: 0;">
+            <li style="margin-bottom: 8px;"><strong>Persamaan Model:</strong> Y = -0.115X + 5.62</li>
+            <li style="margin-bottom: 8px;"><strong>Mean Absolute Error (MAE):</strong> 0.24%</li>
+            <li style="margin-bottom: 8px;"><strong>Root Mean Squared Error (RMSE):</strong> 0.31%</li>
+          </ul>
+        </div>
+        <div class="card warning-card" style="border-left: 4px solid #F59E0B;">
+          <span class="badge-tag amber">Catatan Akademis & Disclaimer</span>
+          <p class="mt-2" style="margin-top: 8px;">Nilai prediksi merupakan estimasi berdasarkan kalkulasi statistik internal untuk pemenuhan tugas RPL dan <strong>bukan merupakan angka rilis resmi dari Badan Pusat Statistik (BPS)</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. HALAMAN ANALISIS -->
+    <section id="analisis" class="page-section">
+      <div class="section-header">
+        <h2>Analisis & Implikasi SDGs 8</h2>
+        <p>Interpretasi kontekstual mengenai dinamika pasar kerja di Indonesia.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        <div class="card">
+          <h3 class="text-royal" style="margin-bottom: 10px;">📈 Dampak COVID-19 & Pemulihan</h3>
+          <p>Tahun 2020 mencatat lonjakan TPT terbesar hingga <strong>7.07%</strong> akibat disrupsi ekonomi global. Namun, sejak tahun 2021 hingga 2024, tren menunjukkan konsistensi pemulihan hingga menyentuh angka <strong>4.91%</strong>.</p>
+        </div>
+        <div class="card">
+          <h3 class="text-teal" style="margin-bottom: 10px;">🎯 Relevansi Target SDGs 8</h3>
+          <p>Pekerjaan layak dan pertumbuhan ekonomi berkelanjutan memerlukan penurunan tingkat pengangguran usia muda serta peningkatan produktivitas sektor informal ke formal.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. HALAMAN TENTANG -->
+    <section id="tentang" class="page-section">
+      <div class="section-header">
+        <h2>Tentang Proyek NRMScope</h2>
+        <p>Sistem Informasi & Analisis Ketenagakerjaan Berbasis Web.</p>
+      </div>
+      <div class="card">
+        <p>NRMScope dikembangkan sebagai bagian dari tugas besar mata kuliah <strong>Rekayasa Perangkat Lunak (RPL)</strong> oleh mahasiswa Semester 3 Program Studi Ilmu Komputer, Universitas Halu Oleo. Website ini bertujuan menyajikan visualisasi data publik secara transparan, modern, dan informatif.</p>
+      </div>
+    </section>
+
+    <!-- 6. HALAMAN TIM KAMI -->
+    <section id="tim" class="page-section">
+      <div class="section-header">
+        <h2>Tim Pengembang Proyek</h2>
+        <p>Kolaborasi mahasiswa Ilmu Komputer dalam pengembangan sistem NRMScope.</p>
+      </div>
+      <div class="team-grid">
+        <div class="card team-card">
+          <div class="team-avatar-wrapper">
+             <img src="assets/images/nadya.jpg.png" alt="Nadya" class="team-photo"></div>
+          <h3>Nadya</h3>
+          <span class="role-badge">Project Manager & System Analyst</span>
+          <p>Bertanggung jawab atas manajemen kebutuhan sistem, penyusunan dokumentasi Software Requirement Specification (SRS), dan evaluasi kriteria ISO/IEC 25010.</p>
+        </div>
+        <div class="card team-card">
+          <div class="team-avatar-wrapper">
+            <img src="assets/images/risma.jpg.jpeg" alt="Risma" class="team-photo"></div>
+          <h3>Risma</h3>
+          <span class="role-badge">UI/UX Designer & Frontend Developer</span>
+          <p>Merancang identitas visual, komponen design system, layout responsif, dan interaktivitas dashboard statistik menggunakan HTML, CSS, dan Chart.js.</p>
+        </div>
+        <div class="card team-card">
+          <div class="team-avatar-wrapper">
+            <img src="assets/images/mira.jpg.jpeg" alt="Mira" class="team-photo"></div>
+          <h3>Mira</h3>
+          <span class="role-badge">Data Analyst & Backend Engineer</span>
+          <p>Mengelola pembersihan data historis BPS, pemrosesan model regresi prediksi TPT, serta integrasi struktur data JSON/CSV pada sistem.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <span class="logo-text text-white">NRM<span style="color: #4998f9;">Scope</span></span>
+        <p>“Understanding Unemployment, Shaping Better Futures.”</p>
+        <small>© 2026 NRMScope RPL Academic Project. Proyek akademis, bukan situs resmi pemerintah.</small>
+      </div>
+      <div class="footer-links">
+        <h4 style="color: #fff; margin-bottom: 8px;">Sumber Data Official</h4>
+        <ul style="list-style: none; padding: 0;">
+          <li style="margin-bottom: 4px;"><a href="https://www.bps.go.id" target="_blank" rel="noopener" style="color: #93C5FD;">Badan Pusat Statistik (BPS)</a></li>
+          <li><a href="https://sdgs.bappenas.go.id" target="_blank" rel="noopener" style="color: #93C5FD;">Situs Resmi SDGs Indonesia</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/dataset.js"></script>
+  <script src="js/chart-config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
